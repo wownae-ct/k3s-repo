@@ -1,0 +1,41 @@
+controller:
+  admin:
+    username: "admin"
+    existingSecret: jenkins-admin-secret
+    userKey: jenkins-admin-user
+    passwordKey: jenkins-admin-password
+  serviceType: NodePort
+  nodePort: 32080
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "3Gi"
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - github:latest
+    - github-branch-source:latest
+    - credentials-binding:latest
+    - pipeline-stage-view:latest
+    - configuration-as-code:latest
+  JCasC:
+    defaultConfig: false
+    configScripts:
+      cloud-config: |
+        jenkins:
+          clouds:
+            - kubernetes:
+                name: "k3s"
+                serverUrl: "https://kubernetes.default"
+                namespace: "jenkins"
+                jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
+                jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"
+agent: 
+  enabled: false
+persistence:
+  enabled: true
+  size: 8Gi
