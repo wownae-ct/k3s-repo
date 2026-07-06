@@ -1,0 +1,8 @@
+kubernetes:latest
+workflow-aggregator:latest
+git:latest
+github:latest
+github-branch-source:latest
+credentials-binding:latest
+pipeline-stage-view:latest
+configuration-as-code:latest
