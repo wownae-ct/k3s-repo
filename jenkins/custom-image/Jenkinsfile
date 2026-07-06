@@ -1,0 +1,57 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command: ["sleep"]
+    args: ["9999999"]
+    volumeMounts:
+    - name: ghcr-creds
+      mountPath: /kaniko/.docker
+  volumes:
+  - name: ghcr-creds
+    secret:
+      secretName: ghcr-credentials
+      items:
+      - key: .dockerconfigjson
+        path: config.json
+  nodeSelector:
+    role: cicd
+"""
+        }
+    }
+    options {
+        timeout(time: 20, unit: 'MINUTES')
+    }
+    environment {
+        IMAGE = 'ghcr.io/wownae-ct/jenkins-custom'
+        TAG   = '2.555.3-jdk21'
+    }
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+        stage('Build & Push (kaniko)') {
+            steps {
+                container('kaniko') {
+                    sh """
+                        /kaniko/executor \\
+                          --context=\${WORKSPACE}/jenkins/custom-image \\
+                          --dockerfile=\${WORKSPACE}/jenkins/custom-image/Dockerfile \\
+                          --destination=${IMAGE}:${TAG} \\
+                          --insecure --skip-tls-verify
+                    """
+                }
+            }
+        }
+    }
+    post {
+        success { echo "✅ ${IMAGE}:${TAG} pushed to GHCR" }
+        failure { echo "❌ Build failed" }
+    }
+}
