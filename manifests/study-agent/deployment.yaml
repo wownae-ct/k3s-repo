@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: study-agent
+  namespace: study-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: study-agent
+  template:
+    metadata:
+      labels:
+        app: study-agent
+    spec:
+      containers:
+      - name: study-agent
+        image: ghcr.io/wownae-ct/study-agent:dev-3
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: ghcr-credentials
+      nodeSelector:
+        role: apps

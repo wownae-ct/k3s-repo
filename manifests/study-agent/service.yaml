@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: study-agent
+  namespace: study-agent
+spec:
+  selector:
+    app: study-agent
+  ports:
+  - port: 8080
+    targetPort: 8080
