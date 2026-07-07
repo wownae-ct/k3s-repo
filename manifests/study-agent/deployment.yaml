@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: study-agent
-        image: ghcr.io/wownae-ct/study-agent:dev-3
+        image: ghcr.io/wownae-ct/study-agent:dev-1
         ports:
         - containerPort: 8080
         livenessProbe:
