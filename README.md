@@ -5,7 +5,7 @@ cortex-agent용 k3s 클러스터의 GitOps 매니페스트 저장소입니다. A
 ## 동작 방식
 - `root-app.yaml`이 `apps/`를 가리키는 App of Apps입니다. `apps/`에 Application을 추가하면 ArgoCD가 하위 앱을 만들고, 자동 동기화(prune·selfHeal)가 켜져 있습니다.
 - 현재 연결된 앱은 `apps/study-agent.yaml`(→ `manifests/study-agent`: Deployment + Service)입니다. 이미지 태그는 CI가 이 저장소에 커밋해 갱신합니다.
-- Jenkins와 ArgoCD는 클러스터의 `role=cicd` 노드에서 실행하도록 구성했습니다.
+- 커스텀 Jenkins 이미지를 빌드하는 Kaniko 파드는 `role=cicd` 노드에서 실행합니다.
 
 ## 구조
 ```
